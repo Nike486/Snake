@@ -3,9 +3,7 @@
 #include <conio.h>
 #include <windows.h>
 
-
 /*
-
       ___           ___           ___           ___           ___
      /  /\         /__/\         /  /\         /__/|         /  /\
     /  /:/_        \  \:\       /  /::\       |  |:|        /  /:/_
@@ -17,30 +15,27 @@
    \__\/ /:/     \  \:\        \  \:\        \  \:\        \  \:\/:/
      /__/:/       \  \:\        \  \:\        \  \:\        \  \::/
      \__\/         \__\/         \__\/         \__\/         \__\/
-
 */
-
-
 
 class Field
 {
 private:
 
+    char mainField[12][30];
+
     size_t xPosSnake = 5;
     size_t yPosSnake = 3;
 
-    char mainField[12][30];
-
-    size_t yPosFood = (rand() % 10) + 1;
-    size_t xPosFood = (rand() % 28) + 1;
+    size_t xPosFood = 15;
+    size_t yPosFood = 6;
 
     size_t xPrevPosSnake[100];
     size_t yPrevPosSnake[100];
 
-    size_t tail = 0;
+    size_t xCorPosSnake[100];
+    size_t yCorPosSnake[100];
 
-    size_t a[100];
-    size_t b[100];
+    size_t tail = 0;
 
     enum movement
     {
@@ -52,15 +47,12 @@ private:
 
     movement move;
 
-
 public:
-
 
     void createField()
     {
         for (int i = 0; i < 12; ++i)
         {
-
             for (int j = 0; j < 30; ++j)
             {
                 if(i == 0 || i == (11)
@@ -109,14 +101,13 @@ public:
 
     void gamePlay()
     {
-
         xPrevPosSnake[0] = xPosSnake;
         yPrevPosSnake[0] = yPosSnake;
 
         for (int i = 0; i < tail; ++i)
         {
-            xPrevPosSnake[i + 1] = a[i];
-            yPrevPosSnake[i + 1] = b[i];
+            xPrevPosSnake[i + 1] = xCorPosSnake[i];
+            yPrevPosSnake[i + 1] = yCorPosSnake[i];
         }
 
         switch (move) {
@@ -136,11 +127,10 @@ public:
                 break;
         }
 
-
         for (int i = 0; i < tail; ++i)
         {
-            a[i] = xPrevPosSnake[i];
-            b[i] = yPrevPosSnake[i];
+            xCorPosSnake[i] = xPrevPosSnake[i];
+            yCorPosSnake[i] = yPrevPosSnake[i];
         }
 
         mainField[yPosFood][xPosFood] = '*';
@@ -158,14 +148,28 @@ public:
             mainField[yPrevPosSnake[i]][xPrevPosSnake[i]] = 'o';
         }
     }
-};
 
+    bool setGameStatus() const
+    {
+        if(yPosSnake == 0 || yPosSnake == (11)
+        || xPosSnake == 0 || xPosSnake == (29))
+        {
+            return true;
+        }
+
+        if(mainField[yPosSnake][xPosSnake] == 'o')
+        {
+            return true;
+        }
+
+        return false;
+    }
+};
 
 int main() {
 
     bool gameOver = false;
-    Field field{};
-
+    Field field;
 
     while (!gameOver)
     {
@@ -173,6 +177,7 @@ int main() {
         field.Input();
         field.gamePlay();
         field.printField();
+        gameOver = field.setGameStatus();
         Sleep(200);
         system("cls");
     }
