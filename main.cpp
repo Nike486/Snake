@@ -29,8 +29,7 @@ private:
     size_t xPosFood = 15;
     size_t yPosFood = 6;
 
-    size_t xPrevPosSnake[100];
-    size_t yPrevPosSnake[100];
+    std::vector<std::pair<size_t, size_t>> prevPosSnake;
 
     size_t xCorPosSnake[100];
     size_t yCorPosSnake[100];
@@ -101,13 +100,13 @@ public:
 
     void gamePlay()
     {
-        xPrevPosSnake[0] = xPosSnake;
-        yPrevPosSnake[0] = yPosSnake;
+        prevPosSnake.clear();
+
+        prevPosSnake.emplace_back(xPosSnake, yPosSnake);
 
         for (int i = 0; i < tail; ++i)
         {
-            xPrevPosSnake[i + 1] = xCorPosSnake[i];
-            yPrevPosSnake[i + 1] = yCorPosSnake[i];
+            prevPosSnake.emplace_back(xCorPosSnake[i], yCorPosSnake[i]);
         }
 
         switch (move) {
@@ -129,8 +128,8 @@ public:
 
         for (int i = 0; i < tail; ++i)
         {
-            xCorPosSnake[i] = xPrevPosSnake[i];
-            yCorPosSnake[i] = yPrevPosSnake[i];
+            xCorPosSnake[i] = prevPosSnake[i].first;
+            yCorPosSnake[i] = prevPosSnake[i].second;
         }
 
         mainField[yPosFood][xPosFood] = '*';
@@ -145,19 +144,15 @@ public:
 
         for (int i = 0; i < tail; ++i)
         {
-            mainField[yPrevPosSnake[i]][xPrevPosSnake[i]] = 'o';
+            mainField[prevPosSnake[i].second][prevPosSnake[i].first] = 'o';
         }
     }
 
     bool setGameStatus() const
     {
         if(yPosSnake == 0 || yPosSnake == (11)
-        || xPosSnake == 0 || xPosSnake == (29))
-        {
-            return true;
-        }
-
-        if(mainField[yPosSnake][xPosSnake] == 'o')
+        || xPosSnake == 0 || xPosSnake == (29)
+        || mainField[yPosSnake][xPosSnake] == 'o')
         {
             return true;
         }
