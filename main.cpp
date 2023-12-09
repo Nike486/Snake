@@ -39,12 +39,8 @@ private:
 
     size_t tail = 0;
 
-    size_t a = 0;
-    size_t b = 0;
-    size_t c = 0;
-    size_t d = 0;
-    size_t e = 0;
-    size_t f = 0;
+    size_t a[100];
+    size_t b[100];
 
     enum movement
     {
@@ -114,17 +110,14 @@ public:
     void gamePlay()
     {
 
-
         xPrevPosSnake[0] = xPosSnake;
         yPrevPosSnake[0] = yPosSnake;
-        xPrevPosSnake[1] = a;
-        yPrevPosSnake[1] = b;
-        xPrevPosSnake[2] = c;
-        yPrevPosSnake[2] = d;
-        xPrevPosSnake[3] = e;
-        yPrevPosSnake[3] = f;
 
-
+        for (int i = 0; i < tail; ++i)
+        {
+            xPrevPosSnake[i + 1] = a[i];
+            yPrevPosSnake[i + 1] = b[i];
+        }
 
         switch (move) {
             case LEFT:
@@ -143,12 +136,12 @@ public:
                 break;
         }
 
-        a = xPrevPosSnake[0];
-        b = yPrevPosSnake[0];
-        c = xPrevPosSnake[1];
-        d = yPrevPosSnake[1];
-        e = xPrevPosSnake[2];
-        f = yPrevPosSnake[2];
+
+        for (int i = 0; i < tail; ++i)
+        {
+            a[i] = xPrevPosSnake[i];
+            b[i] = yPrevPosSnake[i];
+        }
 
         mainField[yPosFood][xPosFood] = '*';
         mainField[yPosSnake][xPosSnake] = '0';
@@ -160,24 +153,11 @@ public:
             tail++;
         }
 
-        std::cout << xPrevPosSnake[0] << ":" << yPrevPosSnake[0] << std::endl;
-        std::cout << xPrevPosSnake[1] << ":" << yPrevPosSnake[1] << std::endl;
-        std::cout << xPrevPosSnake[2] << ":" << yPrevPosSnake[2] << std::endl;
-        std::cout << xPrevPosSnake[3] << ":" << yPrevPosSnake[3] << std::endl;
-
-        mainField[yPrevPosSnake[0]][xPrevPosSnake[0]] = 'o';
-        mainField[yPrevPosSnake[1]][xPrevPosSnake[1]] = 'o';
-        mainField[yPrevPosSnake[2]][xPrevPosSnake[2]] = 'o';
-        mainField[yPrevPosSnake[3]][xPrevPosSnake[3]] = 'o';
-
-
-
-
-
+        for (int i = 0; i < tail; ++i)
+        {
+            mainField[yPrevPosSnake[i]][xPrevPosSnake[i]] = 'o';
+        }
     }
-
-
-
 };
 
 
@@ -185,7 +165,6 @@ int main() {
 
     bool gameOver = false;
     Field field{};
-
 
 
     while (!gameOver)
@@ -197,9 +176,6 @@ int main() {
         Sleep(200);
         system("cls");
     }
-
-
-
 
     return 0;
 }
